@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <title>Promises</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js" type="text/javascript"></script>
+    <script src="app.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <section ng-controller="PromiseResolver">
+      <div ng-show="deferred">
+        <h3>{{title}}</h3>
+        <a href="#" ng-click="resolveIt()">Resolve ({{successData}})</a>
+        <a href="#" ng-click="rejectIt()">Reject ({{failureReason}})</a>
+      </div>
+    </section>
+    
+    <section ng-controller="PromiseExamples">
+      <h2>A simple promise</h2>
+      <prompt action="UserInput.prompt('Good', 'Bad')"></prompt>
+      <hr/>
+      <h2>Multiple promise.then()'s</h2>
+      <prompt action="UserInput.promptAndIncreaseExcitement('Excellent', 'Horrible')"></prompt>
+      <hr/>
+      <h2>Hide rejections</h2>
+      <prompt action="UserInput.promptAndHideRejection('Ok', 'Not really')"></prompt>
+      <hr/>
+      <h2>Chain promises</h2>
+      <prompt action="UserInput.promptAndConfirm('Yes', 'No')"></prompt>
+      <hr/>
+      <h2>Flexible</h2>
+      <h3>Bypass prompt and return immediately:</h3>
+      <prompt action="UserInput.bypassPromptAndReturnImmediately('Bypassed')" flexible="true"></prompt>
+      <h3>Open the prompt:</h3>
+      <prompt action="UserInput.prompt('OK', 'Cancel')" flexible="true"></prompt>
+      <hr/>
+    </section>
+
+    <script type="text/ng-template" id="/prompt.html">
+      <p>
+        <a ng-hide="prompted" href="#" ng-click="{{promptFunction}}">Open prompt</a>
+        <span ng-show="prompted">Waiting...</span>
+      </p>
+      <p ng-show="result">
+        <b>Result:</b>
+        <span ng-show="result">{{result}}</span>
+      </p>
+    </script>
+  </body>
+</html>
