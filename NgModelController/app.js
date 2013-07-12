@@ -14,10 +14,8 @@ app.controller('priceEditController', function ($scope) {
 app.directive('priceEdit', function () {
     "use strict";
     var priceEdit = {
-        template: '<div>' +
-            '<label>Price: </label><input type="text" />' +
-            '</div>',
-        replace: true,
+        template: '<input type="text" />',
+        replace: false,
         restrict: 'E',
         require: '?ngModel',
         link: function (scope, element, attrs, ngModel) {
@@ -86,10 +84,11 @@ app.directive('myNumberValidator', function () {
                 if (!price) return undefined;
 
                 if(!isNaN(parseFloat(price)) && isFinite(price)){
+                    ngModel.$setValidity('NaN',true);
                     return price;
                 }
-
-                console.log(price + ' is not a valid number.');
+                      console.log(ngModel);
+                ngModel.$setValidity('NaN',false);
                 return undefined;
             }
 

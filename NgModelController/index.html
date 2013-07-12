@@ -2,19 +2,22 @@
 <html ng-app="ngModelControllerDemo">
     <head>
         <title>ngModelControllerDemo</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js" type="text/javascript"></script>
-        <script src="app.js" type="text/javascript"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../assets/css/bootstrap.min.css" rel="stylesheet" media="screen">
     </head>
     <body ng-controller="priceEditController">
-        <table>
-            <tr>
-                <td>
-                    <price-edit ng-model="vehicle.price" my-number-validator></price-edit>
-                </td>
-                <td>
-                    {{ vehicle.price }}
-                </td>
-            </tr>
-        </table>
+        <form name="demo" class="form-horizontal">
+             <div class="control-group" ng-class="{error: demo.price.$invalid}">
+                <label class="control-label">Price:&nbsp;</label>
+                <div class="controls">
+                    <price-edit name="price" ng-model="vehicle.price" my-number-validator></price-edit>
+                    <span>{{ vehicle.price }}</span>
+                </div>
+            </div>
+        </form>
+
+        <script src="../lib/angular.js" type="text/javascript"></script>
+        <script src="../lib/ui-bootstrap-0.4.0.js" type="text/javascript"></script>
+        <script src="app.js" type="text/javascript"></script>
     </body>
 </html>
