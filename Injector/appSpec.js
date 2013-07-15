@@ -1,9 +1,9 @@
 describe('RealBillingService', function () {
-    function mockProcessor($provide) {
-        $provide.value('processor', {charge: jasmine.createSpy()});
-    }
-
-    beforeEach(module('billing', mockProcessor));
+    beforeEach(function mockProcessor() {
+        module('billing', function ($provide) {
+            $provide.value('processor', {charge: jasmine.createSpy()});
+        });
+    });
 
     describe('when the order is charged', function () {
         var ccNum, order;
@@ -21,32 +21,22 @@ describe('RealBillingService', function () {
 });
 
 describe('Application', function () {
-    function mockBillingModule($provide) {
-        $provide.value('billingService', {chargeOrder: jasmine.createSpy()});
-    }
-
-    function createPaymentFormController(scope) {
-        var controller;
-        inject(function ($controller) {
-            controller = $controller('PaymentForm', {$scope: scope});
+    beforeEach(function mockBillingModule() {
+        angular.module('billing', []).config(function ($provide) {
+           $provide.value('billingService', {chargeOrder: jasmine.createSpy()});
         });
-        return controller;
-    }
 
-    beforeEach(function () {
-        angular.module('billing', []).config(mockBillingModule);
+        module('app');
     });
-
-    beforeEach(module('app'));
 
     describe('chargeHandler', function () {
         var order, controller;
 
-        beforeEach(function () {
+        beforeEach(inject(function ($controller) {
             order = {amount: "$6.99", creditCard: "1111222233334444"};
-            controller = createPaymentFormController({});
+            controller = $controller('PaymentForm', {$scope: {}});
             controller.chargeHandler(order);
-        });
+        }));
 
         it('should use the billing service to charge the order', inject(function (billingService) {
             expect(billingService.chargeOrder).toHaveBeenCalledWith(order, order.creditCard);
