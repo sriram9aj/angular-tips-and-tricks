@@ -87,7 +87,7 @@ app.directive('myNumberValidator', function () {
                     ngModel.$setValidity('NaN',true);
                     return price;
                 }
-                      console.log(ngModel);
+
                 ngModel.$setValidity('NaN',false);
                 return undefined;
             }
