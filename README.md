@@ -10,7 +10,7 @@
 
 * (BP) templateCache (and grunt html2js)
 
-* (RP) Mocking a module in test
+* (RP) Mocking a module in test -- DONE
 
 * (BP) Mocking directive controllers
     $ngModelController
