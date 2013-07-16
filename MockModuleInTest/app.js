@@ -1,29 +1,18 @@
 (function () {
-    function PayPalCreditCardProcessor() {
-        this.charge = function (creditCard, amount) {
-            console.log('Charging PayPal: ' +
-                'card=[' + creditCard + '], ' +
-                'amount=[' + amount + ']');
-        };
-    }
+    /********************************************************************************************************************************************************************/
+    /*                                                                      Dependant Module                                                                            */
+    /********************************************************************************************************************************************************************/
+    var dependantModule = angular.module('myApp', ['logger']);
 
-    function RealBillingService(processor) {
-        this.chargeOrder = function (order, creditCard) {
-            processor.charge(creditCard, order.amount);
-        };
-    }
-    RealBillingService.$inject = ['processor'];
+    dependantModule.controller('myController', ['logService', function (logService) {
+        "use strict";
+        this.status = '';
 
-    angular.module('billing', []).config(function ($provide) {
-        $provide.provider('billingService', {
-            $get: function($injector) {
-                return $injector.instantiate(RealBillingService);
-            }
-        });
-        $provide.provider('processor', {
-            $get: function($injector) {
-                return $injector.instantiate(PayPalCreditCardProcessor);
-            }
-        });
-    });
+        this.updateStatus = function (status) {
+            this.status = status;
+            logService.log(status)
+        }
+
+        logService.log('Application started.....')
+    }])
 }());

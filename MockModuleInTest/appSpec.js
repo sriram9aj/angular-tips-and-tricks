@@ -1,21 +1,27 @@
-describe('RealBillingService', function () {
-    function mockProcessor($provide) {
-        $provide.value('processor', {charge: jasmine.createSpy()});
-    }
+describe('myApp', function () {
+    var mockLogger = angular.module('logger', []);
 
-    beforeEach(module('billing', mockProcessor));
+    mockLogger.service('logService', function () {
+        this.log = jasmine.createSpy('log');
+    });
 
-    describe('when the order is charged', function () {
-        var ccNum, order;
+    beforeEach(module('myApp'));
 
-        beforeEach(inject(function (billingService) {
-            ccNum = "9999888877776666";
-            order = {amount: "$9.99"};
-            billingService.chargeOrder(order, ccNum);
+    describe('controller', function () {
+        var appController;
+
+        beforeEach(inject(function ($controller) {
+            appController = $controller('myController')
         }));
 
-        it('should use the processor to charge the order', inject(function (processor) {
-            expect(processor.charge).toHaveBeenCalledWith(ccNum, order.amount);
-        }));
+        it('should update status', function () {
+            expect(appController.updateStatus).toBeDefined();
+            expect(appController.status).toEqual('')
+
+            appController.updateStatus('Status updated.')
+
+            expect(appController.status).toEqual('Status updated.')
+
+        });
     });
 });
