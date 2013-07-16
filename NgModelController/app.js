@@ -7,7 +7,7 @@ app.controller('priceEditController', function ($scope) {
         model: 'Mustang',
         style: 'GT',
         year: '2013',
-        price: 30000
+        price: 29899.99
     }
 });
 
@@ -27,6 +27,7 @@ app.directive('priceEdit', function () {
 
             // Specify how UI should be updated
             ngModel.$render = function () {
+                console.log(ngModel);
                 textbox.val(ngModel.$viewValue);
             };
 
@@ -42,10 +43,10 @@ app.directive('priceEdit', function () {
             function parser(price) {
 
                 if (price && price.indexOf('$') !== -1) {
-                    return (price.toString().replace('$', ''));
+                    return (parseFloat(price.toString().replace('$', '')).toFixed(2));
                 }
 
-                return price;
+                return (parseFloat((price)).toFixed(2));
             }
 
             //format to 2 decimal places and append $ sign
@@ -84,11 +85,12 @@ app.directive('myNumberValidator', function () {
                 if (!price) return undefined;
 
                 if(!isNaN(parseFloat(price)) && isFinite(price)){
-                    ngModel.$setValidity('NaN',true);
+                    ngModel.$setValidity('myError',true);
                     return price;
                 }
 
-                ngModel.$setValidity('NaN',false);
+                ngModel.$setValidity('myError',false);
+                console.log(scope);
                 return undefined;
             }
 
