@@ -20,7 +20,7 @@ describe('myApp', function () {
       var scope = $rootScope.$new();
       scope.$apply(function () {
         element = $compile(
-          '<div inline-help help-content></div>')(scope);
+          '<div inline-help help-content="sample1"></div>')(scope);
       });
     }));
 

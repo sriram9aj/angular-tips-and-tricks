@@ -35,27 +35,34 @@
  * Billing
  */
 (function () {
-    function BillingProvider() {
+    function BillingServiceFactory($injector, paymentProcessor, factoryFn) {
+      this.getInstance = function(paymentProcessorName) {
+        return $injector.instantiate(factoryFn, {
+          processor: paymentProcessor(paymentProcessorName)
+        });
+      }
+    }
+
+    function BillingServiceFactoryProvider() {
         var billingService_;
 
         this.setBillingService = function (billingService) {
             billingService_ = billingService;
         }
 
-        this.$get = function ($injector, paymentProcessor) {
-            return function (pName) {
-                return $injector.instantiate(
-                  billingService_, 
-                  {
-                    processor: paymentProcessor(pName)
-                  }
-                );
-            }
+        this.$get = function ($injector) {
+            return $injector.instantiate(
+              BillingServiceFactory, 
+              {
+                factoryFn: billingService_
+              }
+            );
         };
     }
 
     angular.module('billing', ['paymentProcessing'])
-        .provider('billing', BillingProvider);
+        .provider('billingServiceFactory', 
+          BillingServiceFactoryProvider);
 }());
 
 /*
@@ -97,14 +104,15 @@
     RealBillingService.$inject = ['processor', 
                                   'transactionLog'];
 
-    function PaymentDirective(billing) {
+    function PaymentDirective(billingServiceFactory) {
       return {
         restrict: 'EA',
         templateUrl: '/paymentForm.html',
         scope: true,
         link: function (scope, element, attrs) {
-          var processorName = attrs.paymentProcessor,
-              billingService = billing(processorName);
+          var procName = attrs.paymentProcessor,
+              billingService = 
+                billingServiceFactory.getInstance(procName);
 
           scope.handleCharge = function (order) {
             billingService.chargeOrder(order, 
@@ -114,12 +122,13 @@
       };
     }
 
-    function AppConfig(paymentProcessorProvider, billingProvider) {
+    function AppConfig(paymentProcessorProvider, billingServiceFactoryProvider) {
       paymentProcessorProvider.addProcessor('PayPal', 
         PayPalPaymentProcessor);
       paymentProcessorProvider.addProcessor('Square', 
         SquarePaymentProcessor);
-      billingProvider.setBillingService(RealBillingService);      
+      billingServiceFactoryProvider.setBillingService(
+        RealBillingService);      
     }
 
     angular.module('app', ['billing', 'paymentProcessing', 
