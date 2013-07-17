@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <title>Promises</title>
+    <meta name="viewport" 
+          content="width=device-width, initial-scale=1.0">
+    <link href="../assets/css/bootstrap.min.css" 
+          rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <section ng-controller="PromiseResolver" 
+             class="container">
+      <div ng-show="deferred" class="alert alert-error">
+        <h4>{{title}}</h4>
+        <a href="#" ng-click="resolveIt()" 
+           class="btn btn-success">
+           Resolve ({{successData}})
+        </a>
+        <a href="#" ng-click="rejectIt()" 
+           class="btn btn-danger">
+           Reject ({{failureReason}})
+        </a>
+      </div>
+    </section>
+    
+    <section ng-controller="PromiseExamples" 
+             class="container">
+      <div class="well">
+        <h4>A simple promise</h4>
+        <prompt action="UserInput.prompt('Good', 'Bad')">
+        </prompt>
+      </div>
+      <hr/>
+      <div class="well">
+        <h4>Multiple promise.then()'s</h4>
+        <prompt action="UserInput.promptAndIncreaseExcitement('Excellent', 'Horrible')">
+        </prompt>
+      </div>
+      <hr/>
+      <div class="well">
+        <h4>Hide rejections</h4>
+        <prompt action="UserInput.promptAndHideRejection('Ok', 'Not really')">
+        </prompt>
+      </div>
+      <hr/>
+      <div class="well">
+        <h4>Chain promises</h4>
+        <prompt action="UserInput.promptAndConfirm('Yes', 'No')">
+        </prompt>
+      </div>
+      <hr/>
+      <div class="well">
+        <h4>Flexible</h4>
+        <h5>Bypass prompt and return immediately:</h5>          
+        <prompt action="UserInput.bypassPromptAndReturnImmediately('Bypassed')" 
+                flexible="true"></prompt>
+        <h5>Open the prompt:</h5>
+        <prompt action="UserInput.prompt('OK', 'Cancel')" 
+                flexible="true"></prompt>
+      </div>
+    </section>
+
+    <script type="text/ng-template" id="/prompt.html">
+      <p>
+        <a href="#" ng-hide="prompted" 
+           ng-click="{{promptFunction}}" 
+           class="btn btn-primary">Open prompt</a>
+        <span ng-show="prompted">Waiting...</span>
+      </p>
+      <p ng-show="result">
+        <b>Result:</b>
+        <span ng-show="result">{{result}}</span>
+      </p>
+    </script>
+
+    <script src="../lib/angular.js" 
+            type="text/javascript"></script>
+    <script src="../lib/ui-bootstrap-0.4.0.js" 
+            type="text/javascript"></script>
+    <script src="app.js" type="text/javascript"></script>
+  </body>
+</html>

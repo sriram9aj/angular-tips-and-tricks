@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <title>Injector</title>
+    <meta name="viewport" 
+          content="width=device-width, initial-scale=1.0">
+    <link href="../assets/css/bootstrap.min.css" 
+          rel="stylesheet" media="screen">
+    <link href="../assets/css/log-widget.css" 
+          rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <section ng-controller="PaymentForm" class="container">
+      <p>
+        Credit Card:
+        <input type="text" ng-model="order.creditCard">
+      </p>
+      <p>
+        Amount:
+        <input type="text" ng-model="order.amount">
+      </p>
+      <a href="#" class="btn" 
+         ng-click="handleCharge(order)">Charge</a>
+    </section>
+    <div log-widget></div>
+    <script src="../lib/angular.js" 
+            type="text/javascript"></script>
+    <script src="../lib/ui-bootstrap-0.4.0.js" 
+            type="text/javascript"></script>
+    <script src="../lib/log-widget.js"
+            type="text/javascript"></script>
+    <script src="app-rev1.js" 
+            type="text/javascript"></script>
+  </body>
+</html>

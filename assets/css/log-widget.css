@@ -1,0 +1,7 @@
+ul.log-widget {
+	margin-top: 40px;
+	width: 720px;
+	list-style: none;
+	height: 400px;
+	overflow: auto;
+}

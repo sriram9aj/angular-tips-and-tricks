@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
+    <title>Mock Directive Controllers</title>
+    <meta name="viewport" 
+          content="width=device-width, initial-scale=1.0">
+    <link href="../assets/css/bootstrap.min.css" 
+          rel="stylesheet" media="screen">        
+  </head>
+  <body>
+    <section class="container">
+      <h3>Inline Help w/ Sample 1 content</h3>
+      <div inline-help help-content="sample1"></div>
+    </section>
+    <hr/>
+    <section class="container">
+      <h3>Modal Help w/ Sample 2 content</h3>
+      <div modal-help help-content="sample2"></div>
+    </section>
+    <script type="text/ng-template" id="/modalHelp.html">
+      <a href="#" class="btn" ng-click="open()">Help</a>
+      <div modal="shouldBeOpen" options="opts">
+        <div class="modal-header">
+          <h3>Help</h3>
+        </div>
+        <div class="modal-body">
+          {{helpText}}
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn cancel" 
+             ng-click="close()">Close</a>
+        </div>
+      </div>
+    </script>
+    <script src="../lib/angular.js" 
+            type="text/javascript"></script>
+    <script src="../lib/ui-bootstrap-0.4.0.js" 
+            type="text/javascript"></script>
+    <script src="app.js" type="text/javascript"></script>
+  </body>
+</html>
