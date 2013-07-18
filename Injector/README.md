@@ -155,6 +155,24 @@ function AppConfig(creditCardProcessorProvider, billingServiceFactoryProvider) {
 }
 ```
 
+These processors are anchored in the DOM like a controller using the payment directive.
+
+```
+<section>
+  <h4>PayPal Processor</h4>
+  <payment credit-card-processor="PayPal"></payment>
+</section>
+<hr/>
+<section>
+  <h4>Square Processor</h4>
+  <payment credit-card-processor="Square"></payment>
+</section>
+```
+
+The rest of the BillingService, CreditCardProcessor and TransactionLog code remains unchanged. To add additional processors, one would only need to write the implementation, register it in the application config and anchor it in the DOM where it is needed.
+
+As for the code under the hood that ties all of this together, although it is pretty advanced it doesn't have to be modified as more processors are added. 
+
 The addProcessor function registers each credit card processor as its own factory, appending the processor name with the suffix 'CreditCardProcessor'.
 
 ```
@@ -191,7 +209,7 @@ function CreditCardProcessorProvider($provide) {
 }
 ```
 
-The second part of the solution is to be able to create an instance of the BillingService, injecting the appropriate credit card processor as a local. This is accomplished through the BillingServiceFactory.
+Now that we can get an instance of the credit card processor by name, we needto be able to create an instance of the BillingService, injecting the appropriate credit card processor as a local. This is accomplished through the BillingServiceFactory.
 
 ```
 function BillingServiceFactory($injector, creditCardProcessor, factoryFn) {
@@ -200,5 +218,22 @@ function BillingServiceFactory($injector, creditCardProcessor, factoryFn) {
       processor: creditCardProcessor(ccProcessorName)
     });
   }
+}
+```
+
+The factoryFn injected into the factory on creation is set up in the configuration. It needs to point to the BillingService implementation.  The reason we need to pass it in like this is because we have to manually instantiate the BillingService, passing the correct processor instance in as a local dependency.
+
+The directive is the piece that ties everything together by taking the credit card processor name from the attribute and passing it to the billingServiceFactory.
+
+```
+link: function (scope, element, attrs) {
+  var procName = attrs.creditCardProcessor,
+      billingService = 
+        billingServiceFactory.getInstance(procName);
+
+  scope.handleCharge = function (order) {
+    billingService.chargeOrder(order, 
+      order.creditCard);
+  };
 }
 ```
