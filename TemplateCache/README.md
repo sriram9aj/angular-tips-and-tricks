@@ -9,7 +9,7 @@
 * One way is a 
 
 ```
-<script type="text/ng-template">
+<script type="text/ng-template" id="myTemplate.html">
 ```
 
 * Drawback: To test the templates (i.e. test the directives that use the templates), you'll need to somehow load those script tags.
