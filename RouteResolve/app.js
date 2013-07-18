@@ -1,25 +1,25 @@
 (function () {
-    function RandomWait($window, $timeout) {
+    function MyData($window, $timeout) {
       var nextDelay = 0, lastPromise;
-      this.waitRandomly = function () {
+      this.getData = function () {
         var delay = nextDelay;
         nextDelay = Math.floor(((Math.random() * 3) + 1) * 1000);
         
         function afterDelay() {
-          return {"timeoutDelay": delay};
+          return {"loadTime": delay};
         }
         
         return lastPromise = $timeout(afterDelay, delay);
       }
 
-      this.cancel = function () {
+      this.cancelLoad = function () {
         $timeout.cancel(lastPromise);
         nextDelay = 0;
       }
     }
 
-    function RouteController($scope, $routeParams, $location, randomWaitResult, randomWait) {
-      $scope.timeoutDelay = randomWaitResult.timeoutDelay;
+    function RouteController($scope, $routeParams, $location, myDataResult, myData) {
+      $scope.loadTime = myDataResult.loadTime;
       $scope.routeId = $routeParams.id;
       $scope.nextRouteId = ('A' === $scope.routeId) ? 
         'B' : 'A';
@@ -28,7 +28,7 @@
         $scope.loading = true;
       }
       $scope.cancel = function () {
-        randomWait.cancel();
+        myData.cancelLoad();
         $scope.loading = false;
         $scope.cancelled = true;
       }
@@ -40,8 +40,8 @@
           controller: 'routeController',
           templateUrl: '/route.html',
           resolve: {
-            randomWaitResult: function(randomWait) {
-              return randomWait.waitRandomly();
+            myDataResult: function(myData) {
+              return myData.getData();
             }
           }
         })
@@ -51,7 +51,7 @@
     }
 
     angular.module('app', [])
-        .service('randomWait', RandomWait)
+        .service('myData', MyData)
         .controller('routeController', RouteController)
         .config(AppConfig);
 }());
