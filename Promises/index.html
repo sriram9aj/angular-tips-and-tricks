@@ -24,7 +24,7 @@
     </section>
     
     <section ng-controller="PromiseExamples" 
-             class="container">
+             class="container" style="height: 300px; overflow: auto">
       <div class="well">
         <h4>A simple promise</h4>
         <prompt action="UserInput.prompt('Good', 'Bad')">
@@ -69,7 +69,7 @@
       </p>
       <p ng-show="result">
         <b>Result:</b>
-        <span ng-show="result">{{result}}</span>
+        <span ng-show="result" class="label" ng-class="{'label-success': result.success,'label-important': !result.success}">{{result.message}}</span>
       </p>
     </script>
 
