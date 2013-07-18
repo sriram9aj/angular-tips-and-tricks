@@ -17,4 +17,4 @@
 * Angular-app was the first to write a grunt plugin to automate this
 * Someone extracted the plugin from angular-app and released it as a standalone grunt plugin.
 * Grunt configuration lets you specify the base path and the module name, in addition to the input/output params.
-* Application needs to reference the templates module created as a dependency.  This makes it a little tricky for rapid development. One solution is to have a watcher auto-run the html2js.
+* Drawback: application needs to reference the templates module created as a dependency.  This makes it a little tricky for rapid development. One solution is to have a watcher auto-run the html2js.
