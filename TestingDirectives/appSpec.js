@@ -3,7 +3,7 @@ describe('myApp', function () {
 
     describe('greeter directive', function () {
 
-        var compile, scope, element;
+        var compile, scope;
 
         beforeEach(inject(function ($compile, $rootScope) {
             compile = $compile;
@@ -12,14 +12,12 @@ describe('myApp', function () {
 
         it('should render a greeting from the configuration object.', function () {
 
-            scope.config = {
+            scope.myConfig = {
                 greeting: 'Hello, ',
                 name: 'Richie'
             };
 
-            element = angular.element('<greeting config="config"></greeting>');
-
-            compile(element)(scope);
+            var element = compile('<greeting config="myConfig"></greeting>')(scope);
             scope.$digest();
 
             expect(element.find('p').text()).toBe('Hello, Richie');
@@ -29,28 +27,27 @@ describe('myApp', function () {
 
     describe('greeter controller', function () {
 
-        var compile, scope, element, compiled, greeterController;
+        var compile, scope, greeterController;
 
         beforeEach(inject(function ($compile, $rootScope) {
             compile = $compile;
             scope = $rootScope.$new();
+        }));
 
-            scope.config = {
+        it('should have a greetMessage method that returns the greeting and name.', function () {
+
+            scope.myConfig = {
                 greeting: 'Hello, ',
                 name: 'Richie'
             };
 
-            element = angular.element('<greeting config="config"></greeting>');
-
-            compiled = compile(element)(scope);
+            var element = compile('<greeting config="myConfig"></greeting>')(scope);
             scope.$digest();
 
-            greeterController = compiled.controller('greeting');
-        }));
+            greeterController = element.controller('greeting');
 
-        it('should have a greetMessage method that returns the greeting and name.', function () {
             expect(greeterController.greetMessage).toBeDefined();
-            expect(greeterController.greetMessage()).toBe(scope.config.greeting + scope.config.name);
+            expect(greeterController.greetMessage()).toBe(scope.myConfig.greeting + scope.myConfig.name);
         });
     });
 });

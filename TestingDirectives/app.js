@@ -24,11 +24,10 @@
             scope: {
                 config: '='
             },
-            link: function (scope, element, attrs, controller) {
+            link: function (scope, element) {
 
                 scope.$watch('config', function (value) {
                     element.find('p').text(value.greeting + value.name);
-                    console.log(controller.greetMessage());
                 })
             }
         };
