@@ -89,12 +89,12 @@ angular.module("app", [])
 
       function success(data) {
         delete $scope.prompted;
-        return 'Promise resolved: ' + data;
+        return {success: true, message: 'Promise resolved: ' + data};
       }
 
       function failure(reason) {
         delete $scope.prompted;
-        return 'Promise rejected: ' + reason;
+        return {success: false, message: 'Promise rejected: ' + reason};
       }
 
       $scope.promptUser = function () {

@@ -8,12 +8,17 @@
           rel="stylesheet" media="screen">
     <link href="../assets/css/log-widget.css" 
           rel="stylesheet" media="screen">          
+    <style>
+      .green {
+        background: green;
+      }
+    </style>
   </head>
   <body>
     <div ng-view>
     </div>
     <script type="text/ng-template" id="/route.html">
-      <header class="hero-unit">
+      <header class="hero-unit" ng-class="{green: routeId == 'B'}">
         <div class="container">
           <h1>Route {{routeId}} in {{timeoutDelay}}ms</h1>
           <a href="#/route/{{nextRouteId}}" 
