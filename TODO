@@ -49,3 +49,4 @@ BP
 * Colorize the promises text to easily see the difference between resolves and rejects.
 * Colorize the background of the route resolve so it's easy to see which route we're on.
 * Rename payment processor to credit card processor for clarity (in injector)
+* Add an overflow to the promises demo so the alert stays at the top.

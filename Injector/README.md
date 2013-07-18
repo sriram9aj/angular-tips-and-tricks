@@ -88,6 +88,8 @@ Then, using $injector we can create an instance of the BillingService.
 $injector.instantiate(BillingService);
 ```
 
+The index-rev1.html and app-rev1.js files have a working demo of this setup.
+
 Now, consider how to add a second credit card processor implementation. In Guice, we would create a new implementation of the CreditCardProcessor interface and then simply make a new module to utilize it.
 
 ```
@@ -139,6 +141,99 @@ it('...', inject($rootScope, $controller) {
 
 The locals for a controller are determined dynamically based on an external state. For example, the $scope local of a controller is determined based on where the ng-controller directive is in the DOM. The DOM in this case acts as a secondary DI configuration, tying the $scope injectable to whatever the scope is at that point in the DOM.
 
-It turns out that the concept of locals is not specific to controllers. Anywhere where you use $injector.invoke or $injector.instantiate, you can pass in locals.  My solution to the credit card processor problem was to leverage directives and locals like a controller in order to create a BillingService instance with the correct credit card processor injected.
+It turns out that the concept of locals is not specific to controllers. Anywhere where you use $injector.invoke or $injector.instantiate, you can pass in locals.  My solution to the credit card processor problem was to leverage directives and locals like a controller in order to create a BillingService instance with the correct credit card processor injected.  The code for this solution is in index.html and app.js.
 
-The first part of the solution was to add the ability to register multiple credit card processors.
+The first part of the solution was to add the ability to register multiple credit card processors.  This can be seen in the application's config function.
+
+```
+function AppConfig(creditCardProcessorProvider, billingServiceFactoryProvider) {
+  creditCardProcessorProvider.addProcessor('PayPal', 
+    PayPalCreditCardProcessor);
+  creditCardProcessorProvider.addProcessor('Square', 
+    SquareCreditCardProcessor);
+  ...
+}
+```
+
+These processors are anchored in the DOM like a controller using the payment directive.
+
+```
+<section>
+  <h4>PayPal Processor</h4>
+  <payment credit-card-processor="PayPal"></payment>
+</section>
+<hr/>
+<section>
+  <h4>Square Processor</h4>
+  <payment credit-card-processor="Square"></payment>
+</section>
+```
+
+The rest of the BillingService, CreditCardProcessor and TransactionLog code remains unchanged. To add additional processors, one would only need to write the implementation, register it in the application config and anchor it in the DOM where it is needed.
+
+As for the code under the hood that ties all of this together, although it is pretty advanced it doesn't have to be modified as more processors are added. 
+
+The addProcessor function registers each credit card processor as its own factory, appending the processor name with the suffix 'CreditCardProcessor'.
+
+```
+function CreditCardProcessorProvider($provide) {
+	var suffix = "CreditCardProcessor";
+    this.addProcessor = function (name, processor) {
+      $provide.factory(name + suffix, function () {
+      	return processor;
+     });
+	};
+	...
+}
+```
+
+The creditCardProcessor injectable is a function that takes a processor name and returns the instance of that processor. As a bonus, it verifies that the processor instance adheres to the interface contract. In this case it requires the processor to implement a charge function.
+
+```
+function CreditCardProcessorProvider($provide) {
+	...
+    this.$get = function ($injector) {
+      return function (name) {
+          var processorFn = $injector.get(name + suffix),
+              instance = $injector.instantiate(processorFn);
+
+          if (typeof instance.charge !== 'function') {
+              throw new Error(
+                'Credit card processor ' + name + 
+                ' has no "charge" function.');
+          }
+
+          return instance;
+      };
+    };
+}
+```
+
+Now that we can get an instance of the credit card processor by name, we needto be able to create an instance of the BillingService, injecting the appropriate credit card processor as a local. This is accomplished through the BillingServiceFactory.
+
+```
+function BillingServiceFactory($injector, creditCardProcessor, factoryFn) {
+  this.getInstance = function(ccProcessorName) {
+    return $injector.instantiate(factoryFn, {
+      processor: creditCardProcessor(ccProcessorName)
+    });
+  }
+}
+```
+
+The factoryFn injected into the factory on creation is set up in the configuration. It needs to point to the BillingService implementation.  The reason we need to pass it in like this is because we have to manually instantiate the BillingService, passing the correct processor instance in as a local dependency.
+
+The directive is the piece that ties everything together by taking the credit card processor name from the attribute and passing it to the billingServiceFactory.
+
+```
+link: function (scope, element, attrs) {
+  var procName = attrs.creditCardProcessor,
+      billingService = 
+        billingServiceFactory.getInstance(procName);
+
+  scope.handleCharge = function (order) {
+    billingService.chargeOrder(order, 
+      order.creditCard);
+  };
+}
+```
