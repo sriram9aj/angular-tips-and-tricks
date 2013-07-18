@@ -113,6 +113,8 @@ angular.module('billingModuleForPayPal', [])
 angular.module('billingModuleForSquare', [])
 	.config(function ($provide) {
 		$provide.service('paymentProcessor', SquareCreditCardProcessor);
+		...
 	});
+```
 
 Since both modules share the same injector, there can be only one credit card processor.  When there are two defined such as this, the second one overrides the first. This is actually the principle we depend on for unit testing in Angular.
