@@ -60,7 +60,26 @@
         };
     }
 
+    function PaymentDirective(billingServiceFactory) {
+      return {
+        restrict: 'EA',
+        templateUrl: '/paymentForm.html',
+        scope: true,
+        link: function (scope, element, attrs) {
+          var procName = attrs.paymentProcessor,
+              billingService = 
+                billingServiceFactory.getInstance(procName);
+
+          scope.handleCharge = function (order) {
+            billingService.chargeOrder(order, 
+              order.creditCard);
+          };
+        }
+      };
+    }
+
     angular.module('billing', ['paymentProcessing'])
+        .directive('payment', PaymentDirective)
         .provider('billingServiceFactory', 
           BillingServiceFactoryProvider);
 }());
@@ -104,23 +123,7 @@
     RealBillingService.$inject = ['processor', 
                                   'transactionLog'];
 
-    function PaymentDirective(billingServiceFactory) {
-      return {
-        restrict: 'EA',
-        templateUrl: '/paymentForm.html',
-        scope: true,
-        link: function (scope, element, attrs) {
-          var procName = attrs.paymentProcessor,
-              billingService = 
-                billingServiceFactory.getInstance(procName);
-
-          scope.handleCharge = function (order) {
-            billingService.chargeOrder(order, 
-              order.creditCard);
-          };
-        }
-      };
-    }
+    
 
     function AppConfig(paymentProcessorProvider, billingServiceFactoryProvider) {
       paymentProcessorProvider.addProcessor('PayPal', 
@@ -134,6 +137,5 @@
     angular.module('app', ['billing', 'paymentProcessing', 
                            'log-widget'])
         .config(AppConfig)
-        .service('transactionLog', TransactionLog)
-        .directive('payment', PaymentDirective);
+        .service('transactionLog', TransactionLog);
 }());
