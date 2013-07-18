@@ -1,12 +1,12 @@
 (function () {
-  function PayPalPaymentProcessor($log) {
+  function PayPalCreditCardProcessor($log) {
     this.charge = function (creditCard, amount) {
         $log.info('Charged PayPal: ' +
             'card=[' + creditCard + '], ' +
             'amount=[' + amount + ']');
     };
   }
-  PayPalPaymentProcessor.$inject = ['$log'];
+  PayPalCreditCardProcessor.$inject = ['$log'];
 
   function TransactionLog($log) {
     this.logTransaction = function (order) {
@@ -35,7 +35,7 @@
 
   angular.module('app', ['log-widget'])
     .service('billingService', RealBillingService)
-    .service('processor', PayPalPaymentProcessor)
+    .service('processor', PayPalCreditCardProcessor)
     .service('transactionLog', TransactionLog)
     .controller('PaymentForm', PaymentForm);
 }());
