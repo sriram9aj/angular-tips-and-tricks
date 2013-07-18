@@ -3,42 +3,31 @@ describe('myApp', function () {
     beforeEach(module('myApp'));
 
     describe('controller', function () {
-        var appController;
+        var appController, logService;
 
         beforeEach(module(function ($provide) {
-            $provide.service('logService', function(){this.log = jasmine.createSpy()});
+            $provide.service('logService', function () {
+                this.log = jasmine.createSpy();
+            });
         }));
 
-        beforeEach(inject(function ($controller) {
-            appController = $controller('myController')
+        beforeEach(inject(function ($controller, $injector, $rootScope) {
+            appController = $controller('myController',{$scope: $rootScope.$new()});
+            logService = $injector.get('logService');
         }));
 
-        it('should update status', function () {
+        it('should update status and log the status', function () {
             expect(appController.updateStatus).toBeDefined();
-            expect(appController.status).toEqual('')
+            expect(appController.status).toEqual('');
 
-            appController.updateStatus('Status updated.')
+            appController.updateStatus('Status updated.');
 
-            expect(appController.status).toEqual('Status updated.')
+            expect(appController.status).toEqual('Status updated.');
 
-        });
-    });
-
-    describe('log service', function () {
-
-        var logService;
-
-        beforeEach(inject(function ($injector) {
-            logService = $injector.get('logService')
-            spyOn(logService, 'log');
-        }));
-
-        it('should accept a message parameter and log it', function () {
+            //Log Status
             expect(logService.log).toBeDefined();
+            expect(logService.log).toHaveBeenCalledWith('Status updated.');
 
-            logService.log('Log me.');
-
-            expect(logService.log).toHaveBeenCalledWith('Log me.');
         });
     });
 });
