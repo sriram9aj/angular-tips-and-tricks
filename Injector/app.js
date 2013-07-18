@@ -1,9 +1,9 @@
 /*
- * Payment Processing
+ * Credit Card Processing
  */
 (function () {
-  function PaymentProcessorProvider($provide) {
-    var suffix = "PaymentProcessor";
+  function CreditCardProcessorProvider($provide) {
+    var suffix = "CreditCardProcessor";
     this.addProcessor = function (name, processor) {
       $provide.factory(name + suffix, function () {
           return processor;
@@ -17,7 +17,7 @@
 
           if (typeof instance.charge !== 'function') {
               throw new Error(
-                'Payment processor ' + name + 
+                'Credit card processor ' + name + 
                 ' has no "charge" function.');
           }
 
@@ -26,19 +26,19 @@
     };
   }
 
-  angular.module('paymentProcessing', [])
-      .provider('paymentProcessor', 
-                PaymentProcessorProvider);
+  angular.module('creditCardProcessing', [])
+      .provider('creditCardProcessor', 
+                CreditCardProcessorProvider);
 }());
 
 /*
  * Billing
  */
 (function () {
-    function BillingServiceFactory($injector, paymentProcessor, factoryFn) {
-      this.getInstance = function(paymentProcessorName) {
+    function BillingServiceFactory($injector, creditCardProcessor, factoryFn) {
+      this.getInstance = function(ccProcessorName) {
         return $injector.instantiate(factoryFn, {
-          processor: paymentProcessor(paymentProcessorName)
+          processor: creditCardProcessor(ccProcessorName)
         });
       }
     }
@@ -60,7 +60,26 @@
         };
     }
 
-    angular.module('billing', ['paymentProcessing'])
+    function PaymentDirective(billingServiceFactory) {
+      return {
+        restrict: 'EA',
+        templateUrl: '/paymentForm.html',
+        scope: true,
+        link: function (scope, element, attrs) {
+          var procName = attrs.creditCardProcessor,
+              billingService = 
+                billingServiceFactory.getInstance(procName);
+
+          scope.handleCharge = function (order) {
+            billingService.chargeOrder(order, 
+              order.creditCard);
+          };
+        }
+      };
+    }
+
+    angular.module('billing', ['creditCardProcessing'])
+        .directive('payment', PaymentDirective)
         .provider('billingServiceFactory', 
           BillingServiceFactoryProvider);
 }());
@@ -69,23 +88,23 @@
  * Application
  */
 (function () {
-    function PayPalPaymentProcessor($log) {
+    function PayPalCreditCardProcessor($log) {
         this.charge = function (creditCard, amount) {
           $log.info('Charged PayPal: ' +
               'card=[' + creditCard + '], ' +
               'amount=[' + amount + ']');
         };
     }
-    PayPalPaymentProcessor.$inject = ['$log'];
+    PayPalCreditCardProcessor.$inject = ['$log'];
 
-    function SquarePaymentProcessor($log) {
+    function SquareCreditCardProcessor($log) {
         this.charge = function (creditCard, amount) {
           $log.info('Charged Square: ' +
               'card=[' + creditCard + '], ' +
               'amount=[' + amount + ']');
         };
     }
-    SquarePaymentProcessor.$inject = ['$log'];
+    SquareCreditCardProcessor.$inject = ['$log'];
 
     function TransactionLog($log) {
         this.logTransaction = function (order) {
@@ -104,36 +123,17 @@
     RealBillingService.$inject = ['processor', 
                                   'transactionLog'];
 
-    function PaymentDirective(billingServiceFactory) {
-      return {
-        restrict: 'EA',
-        templateUrl: '/paymentForm.html',
-        scope: true,
-        link: function (scope, element, attrs) {
-          var procName = attrs.paymentProcessor,
-              billingService = 
-                billingServiceFactory.getInstance(procName);
-
-          scope.handleCharge = function (order) {
-            billingService.chargeOrder(order, 
-              order.creditCard);
-          };
-        }
-      };
-    }
-
-    function AppConfig(paymentProcessorProvider, billingServiceFactoryProvider) {
-      paymentProcessorProvider.addProcessor('PayPal', 
-        PayPalPaymentProcessor);
-      paymentProcessorProvider.addProcessor('Square', 
-        SquarePaymentProcessor);
+    function AppConfig(creditCardProcessorProvider, billingServiceFactoryProvider) {
+      creditCardProcessorProvider.addProcessor('PayPal', 
+        PayPalCreditCardProcessor);
+      creditCardProcessorProvider.addProcessor('Square', 
+        SquareCreditCardProcessor);
       billingServiceFactoryProvider.setBillingService(
         RealBillingService);      
     }
 
-    angular.module('app', ['billing', 'paymentProcessing', 
+    angular.module('app', ['billing', 'creditCardProcessing', 
                            'log-widget'])
         .config(AppConfig)
-        .service('transactionLog', TransactionLog)
-        .directive('payment', PaymentDirective);
+        .service('transactionLog', TransactionLog);
 }());

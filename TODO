@@ -43,3 +43,9 @@
     don't put everything on the scope just so that it's testable
 * Parent/child scope inheritance with controllers
 * Troubleshooting performance, things that get called often on $digest
+
+BP
+-----
+* Colorize the promises text to easily see the difference between resolves and rejects.
+* Colorize the background of the route resolve so it's easy to see which route we're on.
+* Rename payment processor to credit card processor for clarity (in injector)
