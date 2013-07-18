@@ -9,14 +9,7 @@
         }
     });
 
-    module.service('logService', function () {
-        "use strict";
-        this.log = function (msg) {
-            console.log(msg);
-        }
-    });
-
-    module.controller('myController', ['logService', function (logService) {
+    module.controller('myController', ['$scope','logService', function ($scope,logService) {
         "use strict";
         this.status = '';
 
@@ -24,6 +17,7 @@
             this.status = status;
             logService.log(status)
         }
-    }]);
 
+        $scope.updateStatus = this.updateStatus;
+    }]);
 }());
