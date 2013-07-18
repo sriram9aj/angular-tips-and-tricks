@@ -14,7 +14,18 @@
 
                 <div class="controls">
                     <price-edit name="price" ng-model="vehicle.price" my-number-validator></price-edit>
-                    <span>{{ vehicle.price }}</span>
+                    <br />
+                    <br />
+                    <span><strong>scope.vehicle.price =</strong> <input type="text" ng-model="vehicle.price" /> </span>
+                    <br />
+                    <br />
+                    <span><strong>price $modelValue =</strong> {{ demo.price.$modelValue }} </span>
+                    <br />
+                    <br />
+                    <span><strong>price $viewValue =</strong>  {{ demo.price.$viewValue }} </span>
+                    <br />
+                    <br />
+                    <span><strong>price.$invalid =</strong>  {{ demo.price.$invalid }} </span>
                 </div>
             </div>
         </form>
