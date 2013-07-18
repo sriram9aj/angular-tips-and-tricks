@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="app">
   <head>
-    <title>Injector</title>
+    <title>Route resolve</title>
     <meta name="viewport" 
           content="width=device-width, initial-scale=1.0">
     <link href="../assets/css/bootstrap.min.css" 
@@ -20,7 +20,7 @@
     <script type="text/ng-template" id="/route.html">
       <header class="hero-unit" ng-class="{green: routeId == 'B'}">
         <div class="container">
-          <h1>Route {{routeId}} in {{timeoutDelay}}ms</h1>
+          <h1>Route {{routeId}} in {{loadTime}}ms</h1>
           <a href="#/route/{{nextRouteId}}" 
              class="btn btn-primary btn-large" 
              ng-hide="loading"
